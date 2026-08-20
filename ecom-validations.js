@@ -1,8 +1,15 @@
+import * as ecomValidations from 'interfaces-ecommerce-v1-validations-provider';
+
 const ARGENTINA_ITEM_LIMIT = 3;
 const ARGENTINA_COUNTRY_CODES = ['AR', 'ARGENTINA'];
 
-export function getValidationViolations(options) {
-  const { validationInfo } = options.request;
+/**
+ * @param {import('interfaces-ecommerce-v1-validations-provider').GetValidationViolationsOptions} options
+ * @param {import('interfaces-ecommerce-v1-validations-provider').Context} context
+ * @returns {Promise<import('interfaces-ecommerce-v1-validations-provider').GetValidationViolationsResponse | import('interfaces-ecommerce-v1-validations-provider').BusinessError>}
+ */
+export const getValidationViolations = async (options, context) => {
+  const { validationInfo } = options;
 
   const shippingCountry = validationInfo?.shippingAddress?.address?.country;
   const billingCountry = validationInfo?.billingInfo?.address?.country;
@@ -23,12 +30,12 @@ export function getValidationViolations(options) {
           severity: 'ERROR',
           target: { other: { name: 'OTHER_DEFAULT' } },
           description:
-            `Due to Argentine customs clearance requirements, orders shipped to Argentina are limited to a maximum of ${ARGENTINA_ITEM_LIMIT} items. ` +
-            `Your order currently has ${totalQuantity} item(s) — please remove ${overBy} item(s) to continue.`
+            `Debido a los requisitos de despacho aduanero de Argentina, los pedidos enviados a Argentina están limitados a un máximo de ${ARGENTINA_ITEM_LIMIT} artículos. ` +
+            `Tu pedido actualmente tiene ${totalQuantity} artículo(s) — por favor elimina ${overBy} artículo(s) para continuar.`
         }
       ]
     };
   }
 
   return { violations: [] };
-}
+};
